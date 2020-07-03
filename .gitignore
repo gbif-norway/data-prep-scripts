@@ -1,0 +1,5 @@
+.DS_Store
+scripts/**/*.xlsx
+scripts/**/*.csv
+__pycache__/
+*.py[cod]

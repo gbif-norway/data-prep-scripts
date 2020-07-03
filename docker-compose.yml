@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  script_service:
+    build: .
+    entrypoint: /bin/bash
+    stdin_open: true
+    tty: true
+    volumes: 
+      - ./scripts:/srv/scripts
