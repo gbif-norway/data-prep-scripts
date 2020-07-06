@@ -1,6 +1,7 @@
 import unittest
 from script import create_reference_df, create_vernacular_names_df, create_distribution_df, create_mof_df, create_taxon_df, get_gunnerus_vernacular_names, get_hoeg_vernacular_names
 import pandas as pd
+import numpy as np
 
 
 class TestCreateReferenceDF(unittest.TestCase):
@@ -34,17 +35,17 @@ class TestCreateVernacularNamesDF(unittest.TestCase):
                     'Ataxon': ['Gen1_sp1', 'Gen1_sp1', 'Gen1_sp1', 'Gen2_sp2'],
                     'VernacularName/s': ['Vern1-1', 'Vern1-2', 'Vern1-3', 'Vern2-1'],
                     'LanguageID': ['norw1258', 'stan1295', 'sout2674', 'sout2674'],
-                    'GeographicalArea': ['Tromsø,Senja', 'Nidaros', 'Norway', None],
-                    'Meaning': ['This name refers to the root', None, None, None],
-                    'Comments': [None, 'Variety with purple flowers', None, None]
+                    'GeographicalArea': ['Tromsø,Senja', 'Nidaros', 'Norway', np.nan],
+                    'Meaning': ['This name refers to the root', np.nan, np.nan, np.nan],
+                    'Comments': [np.nan, 'Variety with purple flowers', np.nan, np.nan]
                     })
                 )
         expected = pd.DataFrame({
             'taxonID': [1, 1, 1, 2],
             'vernacularName': ['Vern1-1', 'Vern1-2', 'Vern1-3', 'Vern2-1'],
             'language': ['no', 'de', 'sout2674', 'sout2674'],
-            'locality': ['Tromsø,Senja', 'Nidaros', 'Norway', None],
-            'taxonRemarks': ['This name refers to the root', 'Variety with purple flowers', None, None]
+            'locality': ['Tromsø,Senja', 'Nidaros', 'Norway', np.nan],
+            'taxonRemarks': ['This name refers to the root', 'Variety with purple flowers', np.nan, np.nan]
             })
         pd.testing.assert_frame_equal(result.reset_index(drop=True), expected)
 
@@ -64,7 +65,7 @@ class TestCreateDistributionDF(unittest.TestCase):
     def test_it_creates_expected_df(self):
         result = create_distribution_df(pd.DataFrame({
             'taxonID': range(0, 4),
-            'GeographicalArea': ['Akim;Torsnes;Tjølling;Jølster', 'Norway;Sweden', None, 'Denmark']
+            'GeographicalArea': ['Akim;Torsnes;Tjølling;Jølster', 'Norway;Sweden', np.nan, 'Denmark']
             }))
         expected = pd.DataFrame({
             'taxonID': [0, 0, 0, 0, 1, 1, 3],
@@ -77,13 +78,13 @@ class TestCreateMoFDF(unittest.TestCase):
     def test_it_creates_expected_df(self):
         result = create_mof_df(pd.DataFrame({
             'taxonID': range(0, 5),
-            'GeneralUses': ['F', 'Fu', 'Fu', None, 'V'],
+            'GeneralUses': ['F', 'Fu', 'Fu', np.nan, 'V'],
             'SpecificUses': ['dyes', 'skin', 'tools', 'dyes', 'dyes'],
-            'PlantParts': ['wood', 'seedlings, germinated seeds', None, None, None],
-            'Disorders': [None, None, 'nail', None, None],
-            'ModeApplication': ['internal', None, None, 'internal', None],
-            'ModeApplicationSpecific': ['poultice'] + [None] * 4,
-            'Preparation': ['juice'] + [None] * 4
+            'PlantParts': ['wood', 'seedlings, germinated seeds', np.nan, np.nan, np.nan],
+            'Disorders': [np.nan, np.nan, 'nail', np.nan, np.nan],
+            'ModeApplication': ['internal', np.nan, np.nan, 'internal', np.nan],
+            'ModeApplicationSpecific': ['poultice'] + [np.nan] * 4,
+            'Preparation': ['juice'] + [np.nan] * 4
             }))
         expected = pd.DataFrame({
             'taxonID': [0, 1, 2, 4],
@@ -91,10 +92,10 @@ class TestCreateMoFDF(unittest.TestCase):
             'measurementMethod': ['see references'] * 4,
             'measurementValue': ['food: dyes', 'fuels: skin', 'fuels: tools', 'veterinary: dyes'],
             'measurementRemarks': [
-                {'PlantParts': 'wood',                        'Disorders': None,   'ModeApplication': 'internal', 'ModeApplicationSpecific': 'poultice', 'Preparation': 'juice'},
-                {'PlantParts': 'seedlings, germinated seeds', 'Disorders': None,   'ModeApplication': None,       'ModeApplicationSpecific': None,        'Preparation': None},
-                {'PlantParts': None,                          'Disorders': 'nail', 'ModeApplication': None,       'ModeApplicationSpecific': None,        'Preparation': None},
-                {'PlantParts': None,                          'Disorders': None,   'ModeApplication': None,       'ModeApplicationSpecific': None,        'Preparation': None},
+                {'PlantParts': 'wood', 'ModeApplication': 'internal', 'ModeApplicationSpecific': 'poultice', 'Preparation': 'juice'},
+                {'PlantParts': 'seedlings, germinated seeds'},
+                {'Disorders': 'nail'},
+                {}
                 ]
             })
         self.assertTrue('measurementID' in result.columns)
@@ -105,22 +106,22 @@ class TestCreateTaxonDF(unittest.TestCase):
     def test_it_creates_expected_df(self):
         result = create_taxon_df(pd.DataFrame({
             'taxonID': [1, 2, 3],
-            'Ataxon': ['Gen_sp', None, 'Gen3_sp3'],
-            'LatinGenus': ['Old_gen', None, 'Old3_gen'],
-            'LatinSpecies': ['old_sp', None, 'old3_sp'],
-            'InfraSpRank': [None, None, 'var.'],
-            'InfraSpName': [None, None, 'Old3_var'],
-            'ALatinGenus': ['Gen1', None, 'Gen3'],
-            'ALatinSpecies': ['sp1', None, 'sp3'],
-            'AInfraSpRank': [None, None, 'subsp.'],
-            'AInfraSpName': [None, None, 'newsubsp']
+            'Ataxon': ['Gen_sp', np.nan, 'Gen3_sp3'],
+            'LatinGenus': ['Old_gen', np.nan, 'Old3_gen'],
+            'LatinSpecies': ['old_sp', np.nan, 'old3_sp'],
+            'InfraSpRank': [np.nan, np.nan, 'var.'],
+            'InfraSpName': [np.nan, np.nan, 'Old3_var'],
+            'ALatinGenus': ['Gen1', np.nan, 'Gen3'],
+            'ALatinSpecies': ['sp1', np.nan, 'sp3'],
+            'AInfraSpRank': [np.nan, np.nan, 'subsp.'],
+            'AInfraSpName': [np.nan, np.nan, 'newsubsp']
         }))
         expected = pd.DataFrame({
             'taxonID': [1, 3],
             'genus': ['Gen1', 'Gen3'],
             'specificEpithet': ['sp1', 'sp3'],
-            'verbatimTaxonRank': [None, 'subsp.'],
-            'infraspecificEpithet': [None, 'newsubsp'],
+            'verbatimTaxonRank': [np.nan, 'subsp.'],
+            'infraspecificEpithet': [np.nan, 'newsubsp'],
             'scientificName': ['Old_gen old_sp', 'Old3_gen old3_sp var. Old3_var'],
             'acceptedNameUsage': ['Gen1 sp1', 'Gen3 sp3 subsp. newsubsp'],
             })

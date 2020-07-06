@@ -1,5 +1,6 @@
 .DS_Store
 scripts/**/*.xlsx
 scripts/**/*.csv
+scripts/**/output
 __pycache__/
 *.py[cod]
