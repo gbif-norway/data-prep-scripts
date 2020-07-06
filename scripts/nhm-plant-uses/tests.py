@@ -1,5 +1,5 @@
 import unittest
-from nhmplantuses import create_reference_df, create_vernacular_names_df, create_distribution_df, create_mof_df, create_taxon_df
+from script import create_reference_df, create_vernacular_names_df, create_distribution_df, create_mof_df, create_taxon_df, get_gunnerus_vernacular_names, get_hoeg_vernacular_names
 import pandas as pd
 
 
@@ -27,8 +27,37 @@ class TestCreateReferenceDF(unittest.TestCase):
 
 
 class TestCreateVernacularNamesDF(unittest.TestCase):
-    def test_it_creates_expected_df(self):
-        pass
+    def test_get_gunnerus_vernacular_names(self):
+        result = get_gunnerus_vernacular_names(
+                pd.DataFrame({'taxonID': [1, 2], 'Ataxon': ['Gen1_sp1', 'Gen2_sp2']}),
+                pd.DataFrame({
+                    'Ataxon': ['Gen1_sp1', 'Gen1_sp1', 'Gen1_sp1', 'Gen2_sp2'],
+                    'VernacularName/s': ['Vern1-1', 'Vern1-2', 'Vern1-3', 'Vern2-1'],
+                    'LanguageID': ['norw1258', 'stan1295', 'sout2674', 'sout2674'],
+                    'GeographicalArea': ['Tromsø,Senja', 'Nidaros', 'Norway', None],
+                    'Meaning': ['This name refers to the root', None, None, None],
+                    'Comments': [None, 'Variety with purple flowers', None, None]
+                    })
+                )
+        expected = pd.DataFrame({
+            'taxonID': [1, 1, 1, 2],
+            'vernacularName': ['Vern1-1', 'Vern1-2', 'Vern1-3', 'Vern2-1'],
+            'language': ['no', 'de', 'sout2674', 'sout2674'],
+            'locality': ['Tromsø,Senja', 'Nidaros', 'Norway', None],
+            'taxonRemarks': ['This name refers to the root', 'Variety with purple flowers', None, None]
+            })
+        pd.testing.assert_frame_equal(result.reset_index(drop=True), expected)
+
+    def test_get_hoeg_vernacular_names(self):
+        result = get_hoeg_vernacular_names(pd.DataFrame({
+            'taxonID': [1, 2],
+            'VernacularName/s': ['mjølauke;mjøldrøye', 'buflog']
+            }))
+        expected = pd.DataFrame({
+            'taxonID': [1, 1, 2],
+            'vernacularName': ['mjølauke', 'mjøldrøye', 'buflog']
+            })
+        pd.testing.assert_frame_equal(result.reset_index(drop=True), expected)
 
 
 class TestCreateDistributionDF(unittest.TestCase):
@@ -71,9 +100,32 @@ class TestCreateMoFDF(unittest.TestCase):
         self.assertTrue('measurementID' in result.columns)
         pd.testing.assert_frame_equal(result.drop(columns='measurementID').reset_index(drop=True), expected)
 
-#def _mock_raw():
-#    df = {}
-#    return pd.DataFrame(df)
+
+class TestCreateTaxonDF(unittest.TestCase):
+    def test_it_creates_expected_df(self):
+        result = create_taxon_df(pd.DataFrame({
+            'taxonID': [1, 2, 3],
+            'Ataxon': ['Gen_sp', None, 'Gen3_sp3'],
+            'LatinGenus': ['Old_gen', None, 'Old3_gen'],
+            'LatinSpecies': ['old_sp', None, 'old3_sp'],
+            'InfraSpRank': [None, None, 'var.'],
+            'InfraSpName': [None, None, 'Old3_var'],
+            'ALatinGenus': ['Gen1', None, 'Gen3'],
+            'ALatinSpecies': ['sp1', None, 'sp3'],
+            'AInfraSpRank': [None, None, 'subsp.'],
+            'AInfraSpName': [None, None, 'newsubsp']
+        }))
+        expected = pd.DataFrame({
+            'taxonID': [1, 3],
+            'genus': ['Gen1', 'Gen3'],
+            'specificEpithet': ['sp1', 'sp3'],
+            'verbatimTaxonRank': [None, 'subsp.'],
+            'infraspecificEpithet': [None, 'newsubsp'],
+            'scientificName': ['Old_gen old_sp', 'Old3_gen old3_sp var. Old3_var'],
+            'acceptedNameUsage': ['Gen1 sp1', 'Gen3 sp3 subsp. newsubsp'],
+            })
+        pd.testing.assert_frame_equal(result.reset_index(drop=True), expected)
+
 
 if __name__ == "__main__":
     unittest.main()
