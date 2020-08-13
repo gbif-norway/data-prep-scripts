@@ -3,6 +3,7 @@ version: '3'
 services:
   script_service:
     build: .
+    image: dataprep:latest
     entrypoint: /bin/bash
     stdin_open: true
     tty: true
