@@ -21,6 +21,10 @@ collector_orcids = {
         'Hulcr': 'https://orcid.org/0000-0002-8706-4618'
 }
 
+# Zenodo files
+# 10.5281/zenodo.3980871
+# 10.5281/zenodo.3980846
+# 10.5281/zenodo.3980828
 files_and_author = {'2020': 'Jordal and Smith, 2020', '2019': 'Jordal & Kirkendall', '2018': 'Jordal, 2018'}
 for file_name, author in files_and_author.items():
     print('working on ' + file_name)
