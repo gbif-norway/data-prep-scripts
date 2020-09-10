@@ -2,6 +2,7 @@
 scripts/**/*.xls
 scripts/**/*.xlsx
 scripts/**/*.csv
+scripts/**/*.txt
 scripts/**/output
 __pycache__/
 *.py[cod]

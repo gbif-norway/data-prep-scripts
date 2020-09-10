@@ -1,6 +1,5 @@
 import re
 
-file_ranges = r'[A-Z][A-Z]?(\d+)-[A-Z]?[A-Z]?(\d+)\s*\(.*?(\d{6})[^)]*\)'
 file_ranges = r'[A-Z][A-Z]?(\d+)-[A-Z]?[A-Z]?(\d+)\s*\([^)]*?(\d{6})[^)]*\)'
 single_file = r'[A-Z][A-Z]?(\d+)\s*\([^)]*?(\d{6})[^)]*\)'
 

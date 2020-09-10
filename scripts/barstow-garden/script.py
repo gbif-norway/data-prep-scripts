@@ -7,6 +7,12 @@ from helpers import split_rows
 # POND BED SOUTH (PBS)
 raw = pd.read_excel('Bed5_PBS.xlsx', 'Sheet1', usecols=['scientificname', 'vernacularname', 'vernacularname-no', 'bed', 'comments'], dtype='str')
 raw['occurrenceid'] = [uuid.uuid4() for x in range(len(raw.index))]
+raw['recordedBy'] = 'Stephen Barstow'
+raw['decimalLatitude'] = '63.434'
+raw['decimalLongitude'] = '10.671'
+raw['coordinateUncertaintyInMeters'] = '5000'
+raw['establishmentMeans'] = 'managed'
+raw['basisOfRecord'] = 'humanobservation'
 
 new_df = []
 for index, row in raw.iterrows():
