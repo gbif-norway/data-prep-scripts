@@ -3,6 +3,11 @@ import re
 file_ranges = r'([A-Z][A-Z]?)(\d+)-[A-Z]?[A-Z]?(\d+)\s*\(([^)]*?)(\d{6})[^)]*\)'
 single_file = r'([A-Z][A-Z]?\d+)\s*\(([^)]*?)(\d{6})[^)]*\)'
 
+def get_date(years, months, days):
+    full_years = '20' + years
+    full_years[years.astype(int) > 25] =  '19' + years
+    return full_years + '-' + months + '-' + days
+
 def split_rows(comments, taxonid):
     new_rows = []
     for match in re.findall(file_ranges, comments):

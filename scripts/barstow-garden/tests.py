@@ -1,10 +1,22 @@
 import unittest
-from helpers import split_rows, merge_duplicate_taxa
+from helpers import split_rows, merge_duplicate_taxa, get_date
 import pandas as pd
-from pandas._testing import assert_frame_equal
+from pandas._testing import assert_frame_equal, assert_series_equal
 from unittest.mock import patch
 from uuid import uuid4
 import uuid
+
+
+class GetSensibleDate(unittest.TestCase):
+    def test_constructs_date(self):
+        year, month, day  = pd.Series(['19', '20']), pd.Series(['09', '11']), pd.Series(['01', '02'])
+        expected = pd.Series(['2019-09-01', '2020-11-02'])
+        assert_series_equal(get_date(year, month, day), expected)
+
+    def test_handles_1990s(self):
+        year, month, day  = pd.Series(['98', '10']), pd.Series(['09', '11']), pd.Series(['01', '02'])
+        expected = pd.Series(['1998-09-01', '2010-11-02'])
+        assert_series_equal(get_date(year, month, day), expected)
 
 
 class MergeDuplicateTaxa(unittest.TestCase):
@@ -15,6 +27,11 @@ class MergeDuplicateTaxa(unittest.TestCase):
         assert_frame_equal(merge_duplicate_taxa(input_df), expected_df)
 
 class TestSplitRows(unittest.TestCase):
+    def test_example1(self):
+        eg = 'P42253-42255 (Received bulbs; 040713)'
+        expected = [{'taxonid': 'id1', 'file_name': 'P42253', 'created': '040713', 'description': 'Received bulbs'}, {'taxonid': 'id1', 'file_name': 'P42254', 'created': '040713', 'description': 'Received bulbs'}, {'taxonid': 'id1', 'file_name': 'P42255', 'created': '040713', 'description': 'Received bulbs'}]
+        self.assertEqual(split_rows(eg, 'id1'), expected)
+
     def test_it_splits_simple_file_names_and_dates(self):
         eg = 'IM1032 (120807); HP1231 (110907)'
         expected = [{'taxonid': 'id1', 'file_name': 'IM1032', 'created': '120807', 'description': ''}, {'taxonid': 'id1', 'file_name': 'HP1231', 'created': '110907', 'description': ''}]
