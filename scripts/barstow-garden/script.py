@@ -34,6 +34,7 @@ for source_file in ['Bed5_PBS']:
 
     # Files in dataframe
     files_df = images['file_name'].str.extract('(?P<camera>[^\d]+)(?P<file_number>\d+)')
+    files_df['file_number']  = files_df['file_number'].astype(str)
     images = images.merge(files_df, left_index=True, right_index=True)
 
     # Get dates info into separate cols
@@ -56,14 +57,18 @@ for source_file in ['Bed5_PBS']:
     # Doesn't seem to be any of these, but there might be in the future so let's leave it in
 
     # More complicated cases for P files
-    images['real_file_name'] = images['created_year'] + '/' + images['camera'] + images['created_month'] + images['created_day'] + images['file_number'].str[-4:]
+    images['real_file_name'] = images['created_year'] + '/' + images['camera'] + images['created_month'] + images['created_day'] + images['file_number'][-4:]
+
+    # IMG files need to be 0 padded to 4 chars
+    images.loc[(images['camera'] == 'IM') & (images['file_number'].len < 4), 'file_number'] = '0' + images.loc[(images['camera'] == 'IM') & (images['file_number'].len < 4), 'file_number']
+    images.loc[images['camera'] == 'IM', 'real_file_name'] = 'IMG_' + images.loc[images['camera'] == 'IM', 'file_number']
     images['exists'] = images['real_file_name'].isin(file_names_list)
 
     # print(len(images[images['exists'] == True]))
     used_images = images.loc[images['exists'] == True]
     #for image in used_images['real_file_name'].to_list():
     #    shutil.copy('imgs/' + image + '.JPG', 'used_imgs/' + image + '.jpg')
-    used_images['identifier'] = 'https://static.gbif.no/ipt-specimens/barstow-garden/' + images['created_year'] + '/' + images['real_file_name'] + '.jpg'
+    used_images['identifier'] = 'https://static.gbif.no/ipt-specimens/barstow-garden/' + images['real_file_name'] + '.jpg'
 
     # We can note one occurrence per group of images (group of images all taken on a certain date)
     occurrences = images[['created', 'taxonid']].drop_duplicates()
