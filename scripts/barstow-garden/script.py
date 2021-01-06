@@ -91,6 +91,8 @@ for source_file in ['Bed5_PBS']:
     occurrences['establishmentMeans'] = 'managed'
     occurrences['basisOfRecord'] = 'humanobservation'
     occurrences['eventDate'] = occurrences['created']
+    occurrences['country'] =  'Norway'
+    occurrences['geodeticDatum'] = 'WGS84'
     occurrences.rename(inplace=True, columns={'created': 'eventDate', 'bed': 'eventRemarks'})
     occurrences.merge(merged, how='left', on='taxonid').to_csv(source_file + '__occurrence.csv', index=False)
 
