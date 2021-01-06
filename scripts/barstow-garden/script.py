@@ -28,7 +28,7 @@ for source_file in ['Bed5_PBS']:
     # Files in directories
     file_names_list = []
     for img_dir in listdir('imgs/'):
-        file_names_list = [file_name.split('.')[0] for file_name in listdir('imgs/{}/'.format(img_dir))]
+        #file_names_list = [file_name.split('.')[0] for file_name in listdir('imgs/{}/'.format(img_dir))]
         # file_names_split = pd.Series(file_names_list).str.extract('(?P<camera>[^\d]+)(?P<file_number>\d+)')
         file_names_list += ['{}/{}'.format(img_dir, fname.split('.')[0]) for fname in listdir('imgs/{}/'.format(img_dir))]
 
@@ -57,18 +57,24 @@ for source_file in ['Bed5_PBS']:
     # Doesn't seem to be any of these, but there might be in the future so let's leave it in
 
     # More complicated cases for P files
-    images['real_file_name'] = images['created_year'] + '/' + images['camera'] + images['created_month'] + images['created_day'] + images['file_number'][-4:]
+    images['real_file_name'] = images['camera'] + images['created_month'] + images['created_day'] + images['file_number'].str[-4:]
 
     # IMG files need to be 0 padded to 4 chars
-    images.loc[(images['camera'] == 'IM') & (images['file_number'].len < 4), 'file_number'] = '0' + images.loc[(images['camera'] == 'IM') & (images['file_number'].len < 4), 'file_number']
+    images.loc[(images['camera'] == 'IM') & (images['file_number'].str.len() < 4), 'file_number'] = '0' + images.loc[(images['camera'] == 'IM') & (images['file_number'].str.len() < 4), 'file_number']
     images.loc[images['camera'] == 'IM', 'real_file_name'] = 'IMG_' + images.loc[images['camera'] == 'IM', 'file_number']
+
+    # HP files also need to be changed
+    images.loc[images['camera'] == 'HP', 'real_file_name'] = 'HPIM' + images.loc[images['camera'] == 'HP', 'file_number']
+
+    images['real_file_name'] = '20' + images['created_year'] + '/' + images['real_file_name']
     images['exists'] = images['real_file_name'].isin(file_names_list)
 
     # print(len(images[images['exists'] == True]))
     used_images = images.loc[images['exists'] == True]
-    #for image in used_images['real_file_name'].to_list():
-    #    shutil.copy('imgs/' + image + '.JPG', 'used_imgs/' + image + '.jpg')
+    for image in used_images['real_file_name'].to_list():
+        shutil.copy('imgs/' + image + '.JPG', 'used_imgs/' + image + '.jpg')
     used_images['identifier'] = 'https://static.gbif.no/ipt-specimens/barstow-garden/' + images['real_file_name'] + '.jpg'
+    import pdb; pdb.set_trace()
 
     # We can note one occurrence per group of images (group of images all taken on a certain date)
     occurrences = images[['created', 'taxonid']].drop_duplicates()
@@ -84,6 +90,8 @@ for source_file in ['Bed5_PBS']:
     occurrences['coordinateUncertaintyInMeters'] = '5000'
     occurrences['establishmentMeans'] = 'managed'
     occurrences['basisOfRecord'] = 'humanobservation'
+    occurrences['eventDate'] = occurrences['created']
+    occurrences.rename(inplace=True, columns={'created': 'eventDate', 'bed': 'eventRemarks'})
     occurrences.merge(merged, how='left', on='taxonid').to_csv(source_file + '__occurrence.csv', index=False)
 
     # In case one wishes to publish as checklist
