@@ -72,9 +72,11 @@ for source_file in ['Bed5_PBS']:
     # print(len(images[images['exists'] == True]))
     used_images = images.loc[images['exists'] == True]
     for image in used_images['real_file_name'].to_list():
-        shutil.copy('imgs/' + image + '.JPG', 'used_imgs/' + image + '.jpg')
+        try:
+            shutil.copy('imgs/' + image + '.JPG', 'used_imgs/' + image + '.jpg')
+        except FileNotFoundError:
+            shutil.copy('imgs/' + image + '.jpg', 'used_imgs/' + image + '.jpg')
     used_images['identifier'] = 'https://static.gbif.no/ipt-specimens/barstow-garden/' + images['real_file_name'] + '.jpg'
-    import pdb; pdb.set_trace()
 
     # We can note one occurrence per group of images (group of images all taken on a certain date)
     occurrences = images[['created', 'taxonid']].drop_duplicates()
