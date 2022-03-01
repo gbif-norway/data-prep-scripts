@@ -67,6 +67,22 @@ class DateExtraction(unittest.TestCase):
         assert_series_equal(expected_dates, result_dates)
         assert_series_equal(expected_names, result_names)
 
+    def test_dates_only(self):
+        source = pd.Series(['1873?'])
+        expected_dates = pd.Series(['1873'])
+        expected_names = pd.Series([''])
+        result_names, result_dates = extract_names_and_dates(source)
+        assert_series_equal(expected_dates, result_dates)
+        assert_series_equal(expected_names, result_names)
+
+    def test_date_ranges(self):
+        source = pd.Series(['N.Spjeldnæs, 19??', 'Helbert,1983-85.'])
+        expected_dates = pd.Series(['1900/1999', '1983/1985'])
+        expected_names = pd.Series(['N.Spjeldnæs', 'Helbert'])
+        result_names, result_dates = extract_names_and_dates(source)
+        assert_series_equal(expected_dates, result_dates)
+        assert_series_equal(expected_names, result_names)
+
     # Johan Kiær, hosten 1914. - do we want to do anything about seasons?
 
     def _test_template(self):
@@ -76,4 +92,3 @@ class DateExtraction(unittest.TestCase):
         result_names, result_dates = extract_names_and_dates(source)
         assert_series_equal(expected_dates, result_dates)
         assert_series_equal(expected_names, result_names)
-
