@@ -43,6 +43,14 @@ class DateExtraction(unittest.TestCase):
         assert_series_equal(expected_dates, result_dates)
         assert_series_equal(expected_names, result_names)
 
+    def test_no_name(self):
+        source = pd.Series(['----, 1932'])
+        expected_dates = pd.Series(['1932'])
+        expected_names = pd.Series([''])
+        result_names, result_dates = extract_names_and_dates(source)
+        assert_series_equal(expected_dates, result_dates)
+        assert_series_equal(expected_names, result_names)
+
     def test_string_dates(self):
         source = pd.Series(['Johan Kiær, september 1913', 'Bockelie, sept. 1971', 'Johan Kiær, 10. september - 1898.'])
         expected_dates = pd.Series(['Johan Kiær', 'Bockelie', 'Johan Kiær'])
@@ -75,7 +83,7 @@ class DateExtraction(unittest.TestCase):
         assert_series_equal(expected_dates, result_dates)
         assert_series_equal(expected_names, result_names)
 
-    def test_date_ranges(self):
+    def test_date_ranges(self):  # Do we actually want to try do this? I guess if the fancy dateutil parse can handle it, why not...
         source = pd.Series(['N.Spjeldnæs, 19??', 'Helbert,1983-85.'])
         expected_dates = pd.Series(['1900/1999', '1983/1985'])
         expected_names = pd.Series(['N.Spjeldnæs', 'Helbert'])
@@ -83,9 +91,9 @@ class DateExtraction(unittest.TestCase):
         assert_series_equal(expected_dates, result_dates)
         assert_series_equal(expected_names, result_names)
 
-
-
     # Johan Kiær, hosten 1914. - do we want to do anything about seasons?
+    # A common theme is presents/gave, maybe it's worth writing some rule for these? e.g. 'Gave fra Egil Berntsen, mai 1965.', 'Gave fra U. Of Minnesota', 'Gave, H.H.Horneman, 1924.', 'Formann Henry Holt (gave 1957)'
+
 
     def _test_template(self):
         source = pd.Series([''])
