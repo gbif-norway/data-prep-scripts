@@ -44,9 +44,9 @@ class DateExtraction(unittest.TestCase):
         assert_series_equal(expected_names, result_names)
 
     def test_string_dates(self):
-        source = pd.Series(['Johan Kiær, september 1913'], ['Bockelie, sept. 1971'])
-        expected_dates = pd.Series(['Johan Kiær'], ['Bockelie'])
-        expected_names = pd.Series(['1913-09'], ['1971-09'])
+        source = pd.Series(['Johan Kiær, september 1913', 'Bockelie, sept. 1971', 'Johan Kiær, 10. september - 1898.'])
+        expected_dates = pd.Series(['Johan Kiær', 'Bockelie', 'Johan Kiær'])
+        expected_names = pd.Series(['1913-09', '1971-09', '1898-09-10'])
         result_names, result_dates = extract_names_and_dates(source)
         assert_series_equal(expected_dates, result_dates)
         assert_series_equal(expected_names, result_names)
@@ -82,6 +82,8 @@ class DateExtraction(unittest.TestCase):
         result_names, result_dates = extract_names_and_dates(source)
         assert_series_equal(expected_dates, result_dates)
         assert_series_equal(expected_names, result_names)
+
+
 
     # Johan Kiær, hosten 1914. - do we want to do anything about seasons?
 
