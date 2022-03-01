@@ -76,9 +76,9 @@ class DateExtraction(unittest.TestCase):
         assert_series_equal(expected_names, result_names)
 
     def test_dates_only(self):
-        source = pd.Series(['1873?'])
-        expected_dates = pd.Series(['1873'])
-        expected_names = pd.Series([''])
+        source = pd.Series(['1873?', '15/9/1948'])
+        expected_dates = pd.Series(['1873', '1948-09-15'])
+        expected_names = pd.Series(['', ''])
         result_names, result_dates = extract_names_and_dates(source)
         assert_series_equal(expected_dates, result_dates)
         assert_series_equal(expected_names, result_names)
