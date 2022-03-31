@@ -1,55 +1,55 @@
 import unittest
 import pandas as pd
 from pandas._testing import assert_frame_equal, assert_series_equal
+from helpers import extract_name, extract_date
 
 class DateExtraction(unittest.TestCase):
-    def test_hyphenated(self):
-        source = pd.Series(['G. Henningsmoen, T.G. Bockelie, 15-4-1978.'])
-        expected_dates = pd.Series(['1978-04-15'])
-        expected_names = pd.Series(['G. Henningsmoen, T.G. Bockelie'])
-        result_names, result_dates = extract_names_and_dates(source)
-        assert_series_equal(expected_dates, result_dates)
-        assert_series_equal(expected_names, result_names)
+    def test_names_general(self):
+        expected = pd.Series(['G. Henningsmoen', 'T.G. Bockelie'])
+        result = extract_name('G. Henningsmoen, T.G. Bockelie, 15-4-1978.')
+        assert_series_equal(expected, result)
+
+    def test_dates_general(self):
+        expected = pd.Series(['1978-04-15'])
+        result = extract_date('G. Henningsmoen, T.G. Bockelie, 15-4-1978.')
+        assert_series_equal(expected, result)
 
     def test_dot_delimiter(self):
-        source = pd.Series(['T.Strand, 30.8.1933'])
-        expected_dates = pd.Series(['1933-08-30'])
-        expected_names = pd.Series(['T.Strand'])
-        result_names, result_dates = extract_names_and_dates(source)
-        assert_series_equal(expected_dates, result_dates)
-        assert_series_equal(expected_names, result_names)
+        expected = pd.Series(['1933-08-30'])
+        result = extract_date('T.Strand, 30.8.1933')
+        assert_series_equal(expected, result)
 
     def test_year_only(self):
-        source = pd.Series(['Bjorn T. Larsen, 1974  (?)'])
-        expected_dates = pd.Series(['1974'])
-        expected_names = pd.Series(['Bjorn T. Larsen'])
-        result_names, result_dates = extract_names_and_dates(source)
-        assert_series_equal(expected_dates, result_dates)
-        assert_series_equal(expected_names, result_names)
+        result = extract_date('Bjorn T. Larsen, 1974  (?)')
+        expected = pd.Series(['1974'])
+        assert_series_equal(expected, result)
 
-    def test_hyphen_slash_mix(self):
-        source = pd.Series(['J. Kiær, 2/9-1915'])  # 'EKSKURSJON 10/6-1926'
-        expected_dates = pd.Series(['1915-09-02'])
-        expected_names = pd.Series(['J. Kiær'])
-        result_names, result_dates = extract_names_and_dates(source)
-        assert_series_equal(expected_dates, result_dates)
-        assert_series_equal(expected_names, result_names)
+    def test_name_with_date_question_mark(self):
+        result = extract_name('Bjorn T. Larsen, 1974  (?)')
+        expected = pd.Series(['Bjorn T. Larsen'])
+        assert_series_equal(expected, result)
 
-    def test_no_date(self):
-        source = pd.Series(['Bockelie og Briskeby, ----'])
-        expected_dates = pd.Series([''])
-        expected_names = pd.Series(['Bockelie og Briskeby'])
-        result_names, result_dates = extract_names_and_dates(source)
-        assert_series_equal(expected_dates, result_dates)
-        assert_series_equal(expected_names, result_names)
+    def test_hyphen_slash_mix_names(self):
+        result = extract_name('J. Kiær, 2/9-1915')
+        expected = pd.Series(['J. Kiær'])
+        assert_series_equal(expected, result)
 
-    def test_no_name(self):
-        source = pd.Series(['----, 1932'])
-        expected_dates = pd.Series(['1932'])
-        expected_names = pd.Series([''])
-        result_names, result_dates = extract_names_and_dates(source)
-        assert_series_equal(expected_dates, result_dates)
-        assert_series_equal(expected_names, result_names)
+    def test_hyphen_slash_mix_dates(self):
+        result = extract_date('J. Kiær, 2/9-1915')
+        expected = pd.Series(['1915-02-09'])
+        assert_series_equal(expected, result)
+
+    def test_no_name(self):  # 'Bockelie og Briskeby, ----'
+        result = extract_name('----, 1932')
+        expected = pd.Series()
+        self.assertTrue(result.empty)
+
+    def test_no_date(self):  
+        result = extract_date('Bockelie og Briskeby, ----')
+        expected = pd.Series()
+        self.assertTrue(result.empty)
+
+    # Not tested below
 
     def test_string_dates(self):
         source = pd.Series(['Johan Kiær, september 1913', 'Bockelie, sept. 1971', 'Johan Kiær, 10. september - 1898.'])
@@ -102,3 +102,6 @@ class DateExtraction(unittest.TestCase):
         result_names, result_dates = extract_names_and_dates(source)
         assert_series_equal(expected_dates, result_dates)
         assert_series_equal(expected_names, result_names)
+
+if __name__ == "__main__":
+    unittest.main()
