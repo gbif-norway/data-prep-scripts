@@ -1,0 +1,6 @@
+pandas
+xlrd 
+pyproj
+requests
+openpyxl
+jupyterlab
