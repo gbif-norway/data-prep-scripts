@@ -7,5 +7,7 @@ services:
     entrypoint: /bin/bash
     stdin_open: true
     tty: true
-    volumes: 
+    ports:
+      - "8888:8888"
+    volumes:
       - ./scripts:/srv/scripts
