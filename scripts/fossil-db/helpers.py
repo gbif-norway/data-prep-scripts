@@ -113,7 +113,7 @@ def process_dataframe(df: pd.DataFrame):
             'FINNER': 'verbatimEventDate',
             'DIVERSE': 'occurrenceRemarks',
             'taxa': 'taxonRemarks', 
-            'references': 'materialCitation',
+            'Referense': 'references',
             'TYPE': 'typeStatus', 
             'LATIN': 'scientificName', 
             'LOKALITET': 'locality',
