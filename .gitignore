@@ -4,5 +4,6 @@ scripts/**/*.xlsx
 scripts/**/*.csv
 scripts/**/*.txt
 scripts/**/output
+scripts/bulk/
 __pycache__/
 *.py[cod]
