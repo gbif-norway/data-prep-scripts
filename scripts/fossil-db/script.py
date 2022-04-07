@@ -17,13 +17,13 @@ type_specimens.replace({'typeStatus': mapping}, inplace=True)
 
 all = ordinary_specimens.append(type_specimens, ignore_index=True)
 
-# Minor fix to the lat/longs which are 0
+# Minor fix to the lat/longs which are 0, and add basis of record
 all.loc[all['decimalLongitude'] == '0', 'decimalLatitude'] = np.nan
 all.loc[all['decimalLongitude'] == '0', 'decimalLongitude'] = np.nan
-
-all.to_csv('all.txt', sep='\t', index=False)
+all['basisOfRecord'] = 'FossilSpecimen'
 
 # IPT seems to struggle with the bigger all.txt file, so we split it into multiple
+# all.to_csv('all.txt', sep='\t', index=False)
 all[0:100000].to_csv('all-part1.txt', sep='\t', index=False)
 all[100000:].to_csv('all-part2.txt', sep='\t', index=False)
 
