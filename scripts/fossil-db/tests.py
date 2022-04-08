@@ -6,7 +6,7 @@ from helpers import extract_name, extract_date
 class DateExtraction(unittest.TestCase):
     def test_names_general(self):
         result = extract_name('G. Henningsmoen, T.G. Bockelie, 15-4-1978.')
-        self.assertEqual(['G. Henningsmoen', 'T.G. Bockelie'], result)
+        self.assertEqual('G. Henningsmoen | T.G. Bockelie', result)
 
     def test_dates_general(self):
         result = extract_date('G. Henningsmoen, T.G. Bockelie, 15-4-1978.')
@@ -22,11 +22,11 @@ class DateExtraction(unittest.TestCase):
 
     def test_name_with_date_question_mark(self):
         result = extract_name('Bjorn T. Larsen, 1974  (?)')
-        self.assertEqual(['Bjorn T. Larsen'], result)
+        self.assertEqual('Bjorn T. Larsen', result)
 
     def test_hyphen_slash_mix_names(self):
         result = extract_name('J. Kiær, 2/9-1915')
-        self.assertEqual(['J. Kiær'], result)
+        self.assertEqual('J. Kiær', result)
 
     def test_hyphen_slash_mix_dates(self):
         result = extract_date('J. Kiær, 2/9-1915')
@@ -34,7 +34,7 @@ class DateExtraction(unittest.TestCase):
 
     def test_no_name(self):  # 'Bockelie og Briskeby, ----'
         result = extract_name('----, 1932')
-        self.assertEqual(result, [])
+        self.assertEqual(result, '')
 
     def test_no_date(self):  
         result = extract_date('Bockelie og Briskeby, ----')
@@ -45,7 +45,7 @@ class DateExtraction(unittest.TestCase):
         expecteds = ['Johan Kiær', 'Bockelie', 'Johan Kiær']
         for idx, source in enumerate(sources):
             result = extract_name(source)
-            self.assertEqual([expecteds[idx]], result)
+            self.assertEqual(expecteds[idx], result)
 
     def test_string_dates(self):
         sources = ['Johan Kiær, september 1913', 'Bockelie, sept. 1971', 'Johan Kiær, 10. september - 1898.']
@@ -64,7 +64,7 @@ class DateExtraction(unittest.TestCase):
 
     def test_no_comma_name(self):
         source = 'Kjopt av Anders Eriksen den 5-5-1900.'
-        self.assertEqual(['Kjopt av Anders Eriksen den 5-5-1900.'], extract_name(source))
+        self.assertEqual('Kjopt av Anders Eriksen den 5-5-1900.', extract_name(source))
 
     def test_dates_only(self):
         sources = ['1873?', '5/9/1948']
@@ -85,19 +85,23 @@ class DateExtraction(unittest.TestCase):
         expecteds = ['J. Kiær', 'Tove Bockelie']
         for idx, source in enumerate(sources):
             result = extract_name(source)
-            self.assertEqual([expecteds[idx]], result)
+            self.assertEqual(expecteds[idx], result)
     
     def test_name_with_slashes(self):
         source = 'Williams/Bruton, 1982.'
-        self.assertEqual(['Williams/Bruton'], extract_name(source))
+        self.assertEqual('Williams/Bruton', extract_name(source))
     
     def test_name_with_parenthesis(self):
         source = '1938 (sendt av H. Hoff, 6.5.1943)'
-        self.assertEqual(['1938 (sendt av H. Hoff'], extract_name(source))
+        self.assertEqual('1938 (sendt av H. Hoff', extract_name(source))
 
     def test_multiple_dates(self):
         source = '1938 (sendt av H. Hoff, 6.5.1943)'
         self.assertEqual('1943-05-06', extract_date(source))
+
+    def test_multiple_people(self):
+        source = 'test, test'
+        self.assertEqual('test | test', extract_name(source))
 
     # A common theme is presents/gave, maybe it's worth writing some rule for these? e.g. 'Gave fra Egil Berntsen, mai 1965.', 'Gave fra U. Of Minnesota', 'Gave, H.H.Horneman, 1924.', 'Formann Henry Holt (gave 1957)'
     #J.Kiær. juli 1914
