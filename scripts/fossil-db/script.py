@@ -1,18 +1,27 @@
 import pandas as pd
 import numpy as np
 from helpers import process_dataframe
+import csv
 
 # From Zenodo 10.5281/zenodo.6417623 or https://zenodo.org/record/6417623
 # TODO delete Eirik's mapping header row and upload again so it's consistent with what we will get in the future
-ordinary_specimens = process_dataframe(pd.read_excel('fossils-occurrence_2022-02.xlsx', dtype='str'))  # Defaults to first sheet
-type_specimens = process_dataframe(pd.read_excel('fossils-types-occurrence_2022-02.xlsx', dtype='str'))
+ordinary_specimens_src = pd.read_excel('fossils-occurrence_2022-02.xlsx', dtype='str')
+ordinary_specimens_src.replace('^\s+$', np.nan, regex=True, inplace=True)
+ordinary_specimens_src.dropna(inplace=True, how='all')
+ordinary_specimens = process_dataframe(ordinary_specimens_src)  # Defaults to first sheet
+
+type_specimens_src = pd.read_excel('fossils-types-occurrence_2022-02.xlsx', dtype='str')
+type_specimens_src.replace('^\s+$', np.nan, regex=True, inplace=True)
+type_specimens_src.dropna(inplace=True, how='all')
+type_specimens_src['PMO_NR'] = 'T-' + type_specimens_src['PMO_NR']
+type_specimens = process_dataframe(type_specimens_src)
 
 # For type specimens we just need to map the type field
 mapping = { 'H': 'holotype',
             'P': 'para (lecto) type',
             'L': 'lectotype',
             'N': 'neotype',
-            'S': 'syntype' } 
+            'S': 'syntype' }
 type_specimens.replace({'typeStatus': mapping}, inplace=True)
 
 all = ordinary_specimens.append(type_specimens, ignore_index=True)
@@ -25,6 +34,8 @@ all['basisOfRecord'] = 'FossilSpecimen'
 # IPT seems to struggle with the bigger all.txt file, so we split it into multiple
 # all.to_csv('all.txt', sep='\t', index=False)
 all[0:100000].to_csv('all-part1.txt', sep='\t', index=False)
-all[100000:].to_csv('all-part2.txt', sep='\t', index=False)
+all[100001:].to_csv('all-part2.txt', sep='\t', index=False)
+
+# all['occurrenceID'].duplicated().sum() - count of duplicate occids
 
 import pdb; pdb.set_trace()

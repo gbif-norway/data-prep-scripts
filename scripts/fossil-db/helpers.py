@@ -81,7 +81,10 @@ def _digest_name(candidate: str):
         return None
     return candidate.strip()
 
-def process_dataframe(df: pd.DataFrame): 
+def process_dataframe(df: pd.DataFrame):
+    # Remove linebreaks
+    df = df.replace(r'\n',' ', regex=True)
+
     # Drop all rows which have PMO_NR and SUBNO duplicated
     df.drop_duplicates(['PMO_NR', 'SUBNO'], inplace=True, ignore_index=True)
 
@@ -99,27 +102,27 @@ def process_dataframe(df: pd.DataFrame):
 
     # Rename some columns, mostly based on what Eirik did
     mapping = {
-            'SPECIES': 'specificEpithet', 
+            'SPECIES': 'specificEpithet',
             'GENUS': 'genus',
-            'OD': 'scientificNameAuthorship', 
-            'country_uk': 'country', 
+            'OD': 'scientificNameAuthorship',
+            'country_uk': 'country',
             'Fylke': 'stateProvince',
             'Kommune': 'county',
-            #'': 'scientificName',  # These three seem to have been empty in the spreadsheet from Eirik? 
+            #'': 'scientificName',  # These three seem to have been empty in the spreadsheet from Eirik?
             #'': 'locality',
             #'': 'lithostratigraphicTerms',
             'GRAD_EAST': 'decimalLongitude',
             'GRAD_NORTH': 'decimalLatitude',
             'FINNER': 'verbatimEventDate',
             'DIVERSE': 'occurrenceRemarks',
-            'taxa': 'taxonRemarks', 
+            'taxa': 'taxonRemarks',
             'Referense': 'references',
-            'TYPE': 'typeStatus', 
-            'LATIN': 'scientificName', 
+            'TYPE': 'typeStatus',
+            'LATIN': 'scientificName',
             'LOKALITET': 'locality',
             'STRATIGRAF': 'lithostratigraphicTerms'
             }
-    df.rename(columns=mapping, inplace=True) 
+    df.rename(columns=mapping, inplace=True)
 
     # scientificName seems to sometimes have blank strings e.g. '   ' in... Maybe we should do this for all the cols, idk
     df['scientificName'] = df['scientificName'].replace(r'^\s+$', np.nan, regex=True)
