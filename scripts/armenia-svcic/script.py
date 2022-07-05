@@ -44,6 +44,10 @@ for date_column in date_columns:
 data['basisOfRecord'] = 'occurrence'
 data.loc[data['occurrenceID'].isna(), 'occurrenceID'] = [uuid4() for x in range(data['occurrenceID'].isna().sum())]
 
+# These data are for cultivated crops, see https://github.com/gbif/portal-feedback/issues/3820
+data['establishmentMeans'] = 'managed'
+data['degreeOfEstablishment'] = 'cultivated'
+
 # Output
 data.to_csv('converted.csv', index=False)
 import pdb; pdb.set_trace()
