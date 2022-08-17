@@ -1,6 +1,6 @@
 FROM python:3.8
 RUN apt-get update && \
-    apt-get install -y vim && \
+    apt-get install -y vim ffmpeg libsm6 libxext6 libgl1-mesa-glx zbar-tools && \
     adduser user
 USER user
 ENV PATH=/home/user/.local/bin/:$PATH
