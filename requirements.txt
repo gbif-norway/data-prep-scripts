@@ -1,6 +1,7 @@
 pandas
-xlrd 
+xlrd
 pyproj
 requests
 openpyxl
 jupyterlab
+pyyaml

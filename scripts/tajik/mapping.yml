@@ -1,0 +1,80 @@
+BARCODE: catalognumber
+COLLECTOR: recordedBy
+ADDCOLL: recordedBy_2
+#PREFIX
+NUMBER: recordNumber
+#SUFFIX:
+COLLDD: day
+COLLMM: month
+COLLYY: year
+#DATERES:
+#DATETEXT
+FAMILY: family
+GENUS: genus
+SP1: specificEpithet
+AUTHOR1: scientificNameAuthorship
+#RANK1
+#SP2
+#AUTHOR2
+#RANK2
+#SP3
+#AUTHOR3
+DETBY: identifiedBy
+DETDD: dateIdentified_dd
+DETMM: dateIdentified_mm
+DETYY: dateIdentified_yy
+#DETSTATUS
+COUNTRY: country
+MAJORAREA: stateProvince
+MINORAREA: county
+GAZETTEER: municipality
+LOCNOTES: verbatimLocality
+#GOOGLEMAPS
+#LLUNIT
+#LAT
+#NS
+#LONG
+#EW
+#LLRES
+#LLORIG
+#LLDATUM
+ALT: minimumElevationInMeters
+ALTMAX: maximumElevationInMeters
+HABITATTXT: habitat
+#HABIT
+#PLANTDESC
+#FLCODE
+#FRCODE
+#DUPS
+#USES
+#NOTES
+#CURATENOTE
+#HT
+#DBH
+#LENGTH
+#VERNACULAR
+#LANGUAGE
+#ACCESSION
+#UNIQUE
+#RDESPEC
+#IMPORTID
+#UTMZONE
+#UTM_MGRS
+#UTM_M_E
+#UTM_M_N
+#CULTIVATED
+#PHENOCULT
+#CULTNOTES
+#RDE_ERROR
+#RDE_ERRTXT
+#RDE_INFO
+#AUTOMATCH
+IMAGELIST: associatedMedia
+#TREETAXA
+#BRAHMSLINK
+#MERGEFILE
+#LOCPREFIX
+#ID
+#BOTRECCAT
+#IMAGETEMP
+#NEWNAME
