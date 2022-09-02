@@ -48,6 +48,10 @@ for df_id, file in file_names.items():
     df.loc[df['recordedBy_2'].notnull(), 'recordedBy'] += ' | ' + df.loc[df['recordedBy_2'].notnull(), 'recordedBy_2'].apply(standardise_names)
     del df['recordedBy_2']
 
+    # Collected dates
+    df.loc[:, ['day', 'month', 'year']] = df[['day', 'month', 'year']].replace('^0\..+$', np.nan, regex=True)
+    df.loc[:, ['day', 'month', 'year']] = df[['day', 'month', 'year']].replace('\.?0+$', '', regex=True)
+
     # Construct dateIdentified
     df['dateIdentified'] = None
     df.loc[:, ['dateIdentified_dd', 'dateIdentified_mm', 'dateIdentified_yy']] = df[['dateIdentified_dd', 'dateIdentified_mm', 'dateIdentified_yy']].replace('^0\..+$', np.nan, regex=True)
@@ -67,6 +71,7 @@ for df_id, file in file_names.items():
     dfs[df_id] = df
 
 all = pd.concat(dfs.values(), ignore_index=True)
+all['basisofrecord'] = 'PreservedSpecimen'
 
 # Looking at duplicates
 # all['duplicated_catalognumber'] = all.duplicated('catalognumber')
@@ -74,8 +79,8 @@ all = pd.concat(dfs.values(), ignore_index=True)
 # all.loc[(all['duplicated_catalognumber'] == True) & (all['duplicated_img'] == True), ['catalognumber', 'associatedMedia']]
 all.drop_duplicates(subset='catalognumber', inplace=True)
 all.drop_duplicates(subset='associatedMedia', inplace=True)
-all['possible_duplicates'] = all.duplicated(['day', 'month', 'year', 'family', 'genus', 'specificEpithet'])
-all.loc[all['possible_duplicates'], 'recordedBy']
-all.to_csv()
+# all['possible_duplicates'] = all.duplicated(['day', 'month', 'year', 'family', 'genus', 'specificEpithet'])
+# all.loc[all['possible_duplicates'], 'recordedBy']
+all.to_csv('all.csv', index=False, encoding='utf8')
 
 import pdb; pdb.set_trace()
