@@ -68,7 +68,7 @@ for df_id, file in file_names.items():
     df.loc[df['maximumElevationInMeters'].isnull() & df['minimumElevationInMeters'].notnull(), 'maximumElevationInMeters'] = df.loc[df['maximumElevationInMeters'].isnull() & df['minimumElevationInMeters'].notnull(), 'minimumElevationInMeters']
 
     if df.loc[df['associatedMedia'].notnull(), 'associatedMedia'].any():
-        df.loc[df['associatedMedia'].notnull(), 'associatedMedia'] = df.loc[df['associatedMedia'].notnull(), 'associatedMedia'].str.replace('D:\\HERB-PHOTO\\', 'https://storage.gbif-no.sigma2.no/img/tajikistan/', regex=False).str.replace('\\', '/', regex=False).str.replace(' ', '-', regex=False).str.lower()
+        df.loc[df['associatedMedia'].notnull(), 'associatedMedia'] = df.loc[df['associatedMedia'].notnull(), 'associatedMedia'].str.replace('D:\\HERB-PHOTO\\', 'https://storage.gbif-no.sigma2.no/img/tajikistan/brahms/', regex=False).str.replace('\\', '/', regex=False).str.replace('her[b ]-(ph|f)oto[\s\-]+', 'herb-photo-', regex=True, case=False)
 
     # Fix country spelling mistakes
     df['country'] = df['country'].str.replace('^T$', 'Tajikistan', regex=True)
@@ -101,6 +101,10 @@ all.drop_duplicates(subset='associatedMedia', inplace=True)
 all = all[all['catalognumber'].notna()]
 all = all[all['family'].notna()]
 all['occurrenceID'] = 'urn:catalog:HERB:' + all['catalognumber']
+all['institutionID'] = 'https://ror.org/040em2e23'
+
+#folders = [x.split('/')[5] for x in all['associatedMedia'].unique() if type(x) == str]
+# set(folders)
 
 all.to_csv('all.csv', index=False, encoding='utf8')
 
