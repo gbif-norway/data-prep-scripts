@@ -33,15 +33,6 @@ mapping = {
 }
 df.rename(columns=mapping, inplace=True)
 
-df['eventDate'] = df['verbatimEventDate']
-# date_fixes = ['-00-00', '-00', '00/00/', '00/', '00.00', '00.', '?', ' ']
-# for date_fix in date_fixes:
-#     df['eventDate'] = df['eventDate'].str.replace(date_fix, '')
-# df.loc[df['eventDate'] == '0', 'eventDate'] = None
-# df['eventDate'] = df['eventDate'].str.replace('`', '19')
-
-#df = df.fillna('')
-
 class MyParserInfo(parser.parserinfo):
     MONTHS = [('Jan', 'January', 'januar'), 
             ('Feb', 'February', 'februar'),
@@ -56,14 +47,6 @@ class MyParserInfo(parser.parserinfo):
             ('Nov', 'November'),
             ('Dec', 'December')]
 
-def parse_dates(date):
-    try:
-        return parser.parse(date, dayfirst=True, parserinfo=MyParserInfo())
-    except Exception as e:
-        #print(e)
-        #print(date)
-        return pd.NaT
-
 def get_date_string(date):
     if date is None or date == 0 or date == '0' or pd.isnull(date) or 'ukjent' in date.lower():
         return None
@@ -71,7 +54,7 @@ def get_date_string(date):
     for date_fix in date_fixes:
         date = date.replace(date_fix, '')
     date = date.replace('`', '19')
-    date = date.strip(' .-/')
+    date = date.strip(' .-/|')
 
     try:
         norwegian_months = ['januar', 'februar', 'mars', 'april', 'mai', 'juni', 'juli', 'oktober', 'feby']
@@ -122,5 +105,5 @@ df['decimalLatitude'] = df['decimalDegrees'].str[0]
 df['decimalLongitude'] = df['decimalDegrees'].str[1]
 
 df['catalogNumber'] = 'NHMO-MU-' + df['catalogNumber'].str.rstrip(', ')
-df.to_csv('occurrence.csv', sep='\t')
+df.to_csv('occurrence.txt', sep='\t', index=False)
 import pdb; pdb.set_trace()
