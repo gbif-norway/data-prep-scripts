@@ -104,6 +104,11 @@ df['decimalDegrees'] = df.apply(convert_utm, axis=1)
 df['decimalLatitude'] = df['decimalDegrees'].str[0]
 df['decimalLongitude'] = df['decimalDegrees'].str[1]
 
-df['catalogNumber'] = 'NHMO-MU-' + df['catalogNumber'].str.rstrip(', ')
+df['catalogNumber'] = df['catalogNumber'].str.strip(' ,|/-')
+df.dropna(subset='catalogNumber', inplace=True)
+df['catalogNumber'] = 'NHMO-MU-' + df['catalogNumber']
+print('Duplicates:')
+print(df.loc[df.duplicated('catalogNumber'), 'catalogNumber'])
+
 df.to_csv('occurrence.txt', sep='\t', index=False)
 import pdb; pdb.set_trace()
