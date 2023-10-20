@@ -6,3 +6,4 @@ scripts/**/*.txt
 scripts/**/output
 __pycache__/
 *.py[cod]
+**/data/*
