@@ -4,4 +4,4 @@ pyproj
 requests
 openpyxl
 jupyterlab
-simpledbf
+dbfread
